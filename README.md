@@ -1,11 +1,26 @@
-# Ghișeu Amenzi Blockchain
+# 🧾 Ghișeu Amenzi Blockchain
 
-Acest proiect este un DApp complet pentru gestionarea amenzilor pe blockchain (Hardhat, Solidity, frontend JS, Ocean Protocol demo).
+Plata amenzilor devine transparentă, verificabilă și automatizată printr-un smart contract pe blockchain. Acest proiect aduce un plus de încredere în sistemele publice prin utilizarea tehnologiei descentralizate și prin publicarea datelor anonimizate în mod deschis prin Ocean Protocol.
+
+---
+
+## ⚙️ Tehnologii folosite
+
+- **Solidity** – smart contract pentru plata amenzilor
+- **Hardhat** – framework de dezvoltare Ethereum
+- **Ethers.js** – pentru interacțiuni cu contractul
+- **Ocean Protocol** – pentru publicarea datelor anonime ca bun public
+- **Metamask** – conectare wallet și semnături
+- **Ethereum Sepolia Testnet** – rețea de testare blockchain
+
+---
 
 ## Cerințe
 - Node.js (v16+)
 - npm
 - MetaMask (browser extension)
+
+---
 
 ## Instalare
 1. Clonează repo-ul:
