@@ -68,6 +68,17 @@ Deschide în browser: [http://localhost:8080](http://localhost:8080)
 - Verifică status amendă
 - Integrare demo Ocean Protocol (dataset public)
 
+---
+
+## 🌊 Ocean Protocol Integration
+
+Acest proiect folosește Ocean Protocol pentru a publica date publice despre amenzi (anonimizate), transformându-le în bunuri publice digitale (public goods).
+
+🔗 Vizualizează datasetul publicat:  
+[https://market.oceanprotocol.com/asset/did:op:a2ceab33da0e9a7ebc402517215726c1410f61ef9f2a4e92a2c934af2668a1c6](https://market.oceanprotocol.com/asset/did:op:a2ceab33da0e9a7ebc402517215726c1410f61ef9f2a4e92a2c934af2668a1c6)
+
+---
+
 ## Notă
 - Pentru testare pe rețea publică (ex: Sepolia), modifică configurația Hardhat și folosește un endpoint Infura/Alchemy + cont cu ETH de test.
 - Tranzacțiile locale NU apar pe Etherscan.
