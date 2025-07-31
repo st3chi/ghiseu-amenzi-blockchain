@@ -22,7 +22,7 @@ Plata amenzilor devine transparentă, verificabilă și automatizată printr-un 
 
 ---
 
-## Instalare
+## 🚀 Instalare
 1. Clonează repo-ul:
    ```sh
    git clone https://github.com/st3chi/ghiseu-amenzi-blockchain.git
