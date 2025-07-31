@@ -52,7 +52,7 @@ npx hardhat run scripts/adauga_amenzi.js --network localhost
 
 ### 4. Pornește frontend-ul
 ```sh
-npx http-server frontend -p 8080
+npx http-server frontend -p 8080 -o
 ```
 
 ### 5. Conectează MetaMask
