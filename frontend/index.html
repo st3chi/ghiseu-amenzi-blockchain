@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ghișeu Amenzi</title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script defer src="script.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f7f7f9;
+      color: #222;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      margin-top: 40px;
+      font-size: 2.2rem;
+      letter-spacing: 1px;
+    }
+    .container {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+      padding: 32px 28px 24px 28px;
+      margin-top: 32px;
+      min-width: 320px;
+      max-width: 350px;
+      width: 100%;
+    }
+    input {
+      width: 100%;
+      padding: 8px 10px;
+      margin: 8px 0 16px 0;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background: #fafbfc;
+    }
+    button {
+      background: #222;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 18px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #444;
+    }
+    #walletAddress {
+      font-size: 0.95rem;
+      color: #555;
+      margin-bottom: 18px;
+    }
+    h3 {
+      margin-top: 24px;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+      color: #333;
+    }
+    #statusResult {
+      margin-top: 10px;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧾 Ghișeu Amenzi Blockchain</h1>
+  <div class="container">
+    <button onclick="connectWallet()" id="connectBtn">🔌 Conectează Metamask</button>
+    <p id="walletAddress"></p>
+
+    <h3>1. Adaugă o amendă (autoritate)</h3>
+    <input id="idAdd" placeholder="ID Amenda" />
+    <input id="sumaAdd" placeholder="Suma (ETH)" />
+    <button onclick="adaugaAmenda()">Adaugă</button>
+
+    <h3>2. Plătește o amendă</h3>
+    <input id="idPlateste" placeholder="ID Amenda" />
+    <input id="sumaPlateste" placeholder="Suma (ETH)" />
+    <button onclick="platesteAmenda()">Plătește</button>
+
+    <h3>3. Verifică status</h3>
+    <input id="idVerifica" placeholder="ID Amenda" />
+    <button onclick="verificaStatus()">Verifică</button>
+    <p id="statusResult"></p>
+    <h3 style="margin-top:32px;">Dataset Ocean Protocol</h3>
+    <div id="ocean-dataset" style="background:#f3f6fa;padding:16px 12px;border-radius:8px;margin-top:10px;font-size:0.98rem;"></div>
+    <a id="ocean-link" href="https://market.oceanprotocol.com/asset/did:op:a2ceab33da0e9a7ebc402517215726c1410f61ef9f2a4e92a2c934af2668a1c6" target="_blank" style="display:inline-block;margin-top:8px;color:#1a73e8;text-decoration:none;">Vezi pe Ocean Market</a>
+  </div>
+
+  <script>
+    async function loadOceanDataset() {
+      // DID-ul tău de la Ocean Protocol
+      const did = 'did:op:0dac5eb4965fb2b485181671adbf3a23b0133abf71d2775eda8043e8efc92d19';
+      const url = `https://v4.aquarius.oceanprotocol.com/api/v1/aquarius/assets/ddo/${did}?chainId=137`;
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        const meta = data.metadata;
+        let html = '';
+        if (meta) {
+          html += `<b>Titlu:</b> ${meta.name || '-'}<br>`;
+          html += `<b>Descriere:</b> ${meta.description || '-'}<br>`;
+          html += `<b>Autor:</b> ${meta.author || '-'}<br>`;
+          html += `<b>Data publicării:</b> ${meta.created || '-'}<br>`;
+        } else {
+          html = 'Nu s-au găsit detalii pentru acest dataset.';
+        }
+        document.getElementById('ocean-dataset').innerHTML = html;
+      } catch (e) {
+        document.getElementById('ocean-dataset').innerText = 'Eroare la încărcarea datasetului din Ocean Protocol.';
+      }
+    }
+    window.addEventListener('DOMContentLoaded', loadOceanDataset);
+  </script>
+</body>
+</html>
