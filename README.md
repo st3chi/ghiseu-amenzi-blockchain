@@ -171,6 +171,15 @@ rm -rf node_modules package-lock.json
 npm install
 ```
 
+## 🌊 Ocean Protocol Integration
+
+Acest proiect folosește Ocean Protocol pentru a publica date publice despre amenzi (anonimizate), transformându-le în bunuri publice digitale (public goods).
+
+🔗 Vizualizează datasetul publicat:  
+[https://market.oceanprotocol.com/asset/did:op:a2ceab33da0e9a7ebc402517215726c1410f61ef9f2a4e92a2c934af2668a1c6](https://market.oceanprotocol.com/asset/did:op:a2ceab33da0e9a7ebc402517215726c1410f61ef9f2a4e92a2c934af2668a1c6)
+
+---
+
 ## 📁 Structura Proiectului
 
 ```
