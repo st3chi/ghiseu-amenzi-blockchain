@@ -3,8 +3,8 @@ import { ethers } from 'ethers';
 import './App.css';
 import abiData from './abi.json';
 
-const contractAddress = "0x1B46704a7b474b19D03cADb0C255bCB87e5d4C6E"; // Sepolia
-const localContractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // Localhost - actualizează cu adresa reală
+const contractAddress = "0xd61361cD7EE702f627459a32220A9ddaB8d5C2e2"; // Sepolia (nou deploy)
+const localContractAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"; // Localhost - actualizează cu adresa reală
 
 function App() {
   const [walletAddress, setWalletAddress] = useState('');
@@ -18,6 +18,9 @@ function App() {
   const [sumaPlateste, setSumaPlateste] = useState('');
   const [idVerifica, setIdVerifica] = useState('');
   const [statusResult, setStatusResult] = useState('');
+  const [allAmendments, setAllAmendments] = useState([]);
+  const [listError, setListError] = useState('');
+  const [showAmendments, setShowAmendments] = useState(false);
   
   // State pentru informații despre rețea
   const [networkInfo, setNetworkInfo] = useState('');
@@ -123,6 +126,11 @@ function App() {
         setNetworkInfo(networkName);
         console.log(`Connected to ${networkName} with contract at ${contractAddr}`);
         
+        const code = await provider.getCode(contractAddr);
+        if (!code || code === '0x' || code === '0x0') {
+          throw new Error(`Contractul nu este deployat pe rețeaua ${networkName} la adresa ${contractAddr}. Verifică rețeaua și adresa contractului.`);
+        }
+        
         // Creează instanța contractului
         const contractInstance = new ethers.Contract(contractAddr, abiData.abi, signer);
         setContract(contractInstance);
@@ -180,14 +188,76 @@ function App() {
       return;
     }
     
+    if (!idVerifica || idVerifica.trim() === '') {
+      alert("Introdu un ID de amendă valid înainte de verificare.");
+      return;
+    }
+
     try {
-      const status = await contract.verificaStatus(idVerifica);
-      setStatusResult(status ? "✅ Plătită" : "❌ Neplătită");
+      const network = await contract.provider.getNetwork();
+      const code = await contract.provider.getCode(contract.address);
+      console.log('Verificare amendă', { idVerifica, contractAddress: contract.address, network, code });
+
+      if (!code || code === '0x' || code === '0x0') {
+        setStatusResult('❌ Contractul nu este deployat la adresa configurată. Verifică rețeaua și adresa contractului.');
+        return;
+      }
+
+      const [suma, platita] = await contract.amenzi(idVerifica);
+      const sumaEth = ethers.utils.formatEther(suma);
+
+      if (suma.eq(0)) {
+        setStatusResult('❌ Amendă inexistentă');
+      } else if (platita) {
+        setStatusResult(`✅ Plătită (${sumaEth} ETH)`);
+      } else {
+        setStatusResult(`❌ Neplătită (${sumaEth} ETH)`);
+      }
       setIdVerifica('');
     } catch (error) {
-      console.error("Eroare la verificarea statusului:", error);
-      alert("Eroare la verificarea statusului!");
+      console.error('Eroare la verificarea statusului:', error);
+      setStatusResult(`❌ Eroare la verificarea statusului: ${error.message}`);
     }
+  };
+
+  const loadAllAmendments = async () => {
+    if (!contract) {
+      alert("Conectează wallet-ul mai întâi!");
+      return;
+    }
+
+    try {
+      const ids = await contract.getAmendaIds();
+      const amendments = await Promise.all(ids.map(async (id) => {
+        const [suma, platita] = await contract.amenzi(id);
+        return {
+          id,
+          suma: ethers.utils.formatEther(suma),
+          platita
+        };
+      }));
+
+      setAllAmendments(amendments);
+      setListError('');
+      setShowAmendments(true);
+    } catch (error) {
+      console.error('Eroare la listarea amenzilor:', error);
+      setAllAmendments([]);
+      setShowAmendments(false);
+      if (error.message && error.message.includes('getAmendaIds')) {
+        setListError('Funcția getAmendaIds nu este disponibilă pe contractul curent. Redeploy contractul sau folosește o adresă nouă.');
+      } else {
+        setListError(`Eroare la listarea amenzilor: ${error.message}`);
+      }
+    }
+  };
+
+  const toggleAmendments = async () => {
+    if (showAmendments) {
+      setShowAmendments(false);
+      return;
+    }
+    await loadAllAmendments();
   };
 
   const loadOceanDataset = useCallback(async () => {
@@ -350,7 +420,7 @@ function App() {
       } catch (apiError) {
         console.log('Direct API publish failed, showing prepared metadata:', apiError);
         
-        // Dacă API-ul nu funcționează, cel puțin afișăm metadata pregătită
+        /* Dacă API-ul nu funcționează, cel puțin afișăm metadata pregătită 
         const datasetInfo = `
           <b>🎯 Dataset Ocean Protocol Pregătit!</b><br><br>
           <b>📝 Titlu:</b> ${metadata.name}<br>
@@ -365,8 +435,8 @@ function App() {
           <small><i>API Error: ${apiError.message}<br>
           !!</i></small>
         `;
-        
-        setOceanDataset(datasetInfo);
+        */
+        //setOceanDataset(datasetInfo);
         setOceanLink('https://market.sepolia.oceanprotocol.com/');
         
         alert(`Metadata pregătită cu succes!\nTitlu: ${titluDataset}\nID Amendă: ${idAmendaDataset}\n\nNota: API-ul Ocean Protocol poate restricționa publicarea directă din browser.`);
@@ -445,8 +515,40 @@ function App() {
         <button onClick={verificaStatus}>Verifică</button>
         {statusResult && <p className="status-result">{statusResult}</p>}
 
+        <h3>4. Listează toate amenzile</h3>
+        <button onClick={toggleAmendments}>{showAmendments ? 'Ascunde amenzile' : 'Listare amenzi'}</button>
+        {listError && <p className="status-result">{listError}</p>}
+        {showAmendments && (
+          <div className="amendments-list">
+            <h4>Amendamente</h4>
+            {allAmendments.length === 0 ? (
+              <p>Nu există amenzile momentan.</p>
+            ) : (
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Suma (ETH)</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {allAmendments.map((amendment) => (
+                    <tr key={amendment.id}>
+                      <td>{amendment.id}</td>
+                      <td>{amendment.suma}</td>
+                      <td>{amendment.platita ? 'Plătită' : 'Neplătită'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        )}
+
+        {/*
         <h3 style={{marginTop: '32px'}}>📊 Creează Dataset Ocean Protocol</h3>
-        <div className="ocean-form">
+        <div className="ocean-form"> 
           <input 
             value={titluDataset}
             onChange={(e) => setTitluDataset(e.target.value)}
@@ -488,7 +590,8 @@ function App() {
             🚀 Creează Dataset
           </button>
         </div>
-
+        */}
+        {/*
         <h3 style={{marginTop: '32px'}}>🔍 Căutare Dataset Existent</h3>
         <div 
           className="ocean-dataset" 
@@ -509,6 +612,7 @@ function App() {
           style={{marginBottom: '8px'}} 
         />
         <button onClick={loadOceanDataset}>Caută Dataset</button>
+        */}
       </div>
     </div>
   );

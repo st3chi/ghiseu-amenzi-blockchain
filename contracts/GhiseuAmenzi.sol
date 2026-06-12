@@ -8,6 +8,8 @@ contract GhiseuAmenzi {
     }
 
     mapping(string => Amenda) public amenzi;
+    mapping(string => bool) public amendaExistenta;
+    string[] public amendaIds;
 
     address public owner;
 
@@ -20,8 +22,14 @@ contract GhiseuAmenzi {
         _;
     }
 
+    event AmendaAdaugata(string indexed idAmenda, uint suma);
+
     function adaugaAmenda(string memory idAmenda, uint suma) public onlyOwner {
+        require(!amendaExistenta[idAmenda], "Amenda exista deja!");
         amenzi[idAmenda] = Amenda(suma, false);
+        amendaExistenta[idAmenda] = true;
+        amendaIds.push(idAmenda);
+        emit AmendaAdaugata(idAmenda, suma);
     }
 
     function platesteAmenda(string memory idAmenda) public payable {
@@ -31,8 +39,12 @@ contract GhiseuAmenzi {
         amenzi[idAmenda].platita = true;
     }
 
-    function verificaStatus(string memory idAmenda) public view returns(bool) {
-        return amenzi[idAmenda].platita;
+    function verificaStatus(string memory idAmenda) public view returns(uint, bool) {
+        return (amenzi[idAmenda].suma, amenzi[idAmenda].platita);
+    }
+
+    function getAmendaIds() public view returns (string[] memory) {
+        return amendaIds;
     }
 
     function retrageFonduri() public onlyOwner {

@@ -1,5 +1,5 @@
 let contract;
-const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // ← adaugă adresa reală
+const contractAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"; // ← adaugă adresa reală
 const abi = []; // ← se va popula din abi.json
 
 window.onload = async () => {
@@ -64,8 +64,16 @@ async function verificaStatus() {
   const contract = new ethers.Contract(contractAddress, window.ghiseuAbi, signer);
   const idInput = document.getElementById("idVerifica");
   const id = idInput.value;
-  const status = await contract.verificaStatus(id);
-  document.getElementById("statusResult").innerText = status ? "✅ Plătită" : "❌ Neplătită";
+  const [suma, platita] = await contract.verificaStatus(id);
+  let text;
+  if (suma.eq(0)) {
+    text = "❌ Amendă inexistentă";
+  } else if (platita) {
+    text = `✅ Plătită (${ethers.utils.formatEther(suma)} ETH)`;
+  } else {
+    text = `❌ Neplătită (${ethers.utils.formatEther(suma)} ETH)`;
+  }
+  document.getElementById("statusResult").innerText = text;
   idInput.value = "";
 }
 

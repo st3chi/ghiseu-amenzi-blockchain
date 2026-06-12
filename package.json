@@ -1,6 +1,7 @@
 {
   "name": "ghiseu-amenzi",
   "version": "1.0.0",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -14,8 +15,8 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^6.1.0",
-    "hardhat": "^2.26.1"
+    "@nomicfoundation/hardhat-ethers": "^4.0.11",
+    "hardhat": "^3.4.5"
   },
   "dependencies": {
     "dotenv": "^17.2.1"

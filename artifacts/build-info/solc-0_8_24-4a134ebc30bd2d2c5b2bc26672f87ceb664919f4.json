@@ -1,0 +1,42 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_24-4a134ebc30bd2d2c5b2bc26672f87ceb664919f4",
+  "solcVersion": "0.8.24",
+  "solcLongVersion": "0.8.24+commit.e11b9ed9",
+  "compilerType": "solc",
+  "userSourceNameMap": {
+    "contracts/GhiseuAmenzi.sol": "project/contracts/GhiseuAmenzi.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "shanghai",
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode.linkReferences",
+            "evm.bytecode.object",
+            "evm.bytecode.opcodes",
+            "evm.bytecode.sourceMap",
+            "evm.deployedBytecode.immutableReferences",
+            "evm.deployedBytecode.linkReferences",
+            "evm.deployedBytecode.object",
+            "evm.deployedBytecode.opcodes",
+            "evm.deployedBytecode.sourceMap",
+            "evm.methodIdentifiers"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/GhiseuAmenzi.sol": {
+        "content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.0;\r\n\r\ncontract GhiseuAmenzi {\r\n    struct Amenda {\r\n        uint suma;\r\n        bool platita;\r\n    }\r\n\r\n    mapping(string => Amenda) public amenzi;\r\n    mapping(string => bool) public amendaExistenta;\r\n    string[] public amendaIds;\r\n\r\n    address public owner;\r\n\r\n    constructor() {\r\n        owner = msg.sender;\r\n    }\r\n\r\n    modifier onlyOwner {\r\n        require(msg.sender == owner, \"Nu esti autorizat!\");\r\n        _;\r\n    }\r\n\r\n    event AmendaAdaugata(string indexed idAmenda, uint suma);\r\n\r\n    function adaugaAmenda(string memory idAmenda, uint suma) public onlyOwner {\r\n        require(!amendaExistenta[idAmenda], \"Amenda exista deja!\");\r\n        amenzi[idAmenda] = Amenda(suma, false);\r\n        amendaExistenta[idAmenda] = true;\r\n        amendaIds.push(idAmenda);\r\n        emit AmendaAdaugata(idAmenda, suma);\r\n    }\r\n\r\n    function platesteAmenda(string memory idAmenda) public payable {\r\n        require(!amenzi[idAmenda].platita, \"Amenda deja platita!\");\r\n        require(msg.value == amenzi[idAmenda].suma, \"Suma incorecta!\");\r\n        \r\n        amenzi[idAmenda].platita = true;\r\n    }\r\n\r\n    function verificaStatus(string memory idAmenda) public view returns(uint, bool) {\r\n        return (amenzi[idAmenda].suma, amenzi[idAmenda].platita);\r\n    }\r\n\r\n    function getAmendaIds() public view returns (string[] memory) {\r\n        return amendaIds;\r\n    }\r\n\r\n    function retrageFonduri() public onlyOwner {\r\n        payable(owner).transfer(address(this).balance);\r\n    }\r\n} "
+      }
+    }
+  }
+}
