@@ -1,12 +1,11 @@
 # 🧾 Ghișeu Amenzi Blockchain
 
-Aplicație completă pentru gestionarea amenzilor pe blockchain cu integrare **Ocean Protocol**. 
+Aplicație completă pentru gestionarea amenzilor pe blockchain . 
 Suportă atât **Hardhat Local Network** cât și **Sepolia Testnet**.
 
 ## ⚡ Funcționalități
 
 - 🏛️ **Gestionare Amenzi**: Adaugă, plătește, verifică status amenzi
-- 🌊 **Ocean Protocol**: Creează și caută dataset-uri pentru amenzi
 - 🔄 **Dual Network**: Funcționează pe Hardhat Local și Sepolia Testnet
 - 🔗 **MetaMask Integration**: Conectare automată și detectare rețea
 - ⚛️ **React Frontend**: Interfață modernă și responsive
@@ -154,11 +153,6 @@ npm run build        # Compilează pentru producție
 - ✅ Pentru localhost: Asigură-te că nodul Hardhat rulează
 - ✅ Pentru Sepolia: Verifică că RPC-ul funcționează
 
-### ❌ **Ocean Protocol nu funcționează**
-- ✅ Verifică conexiunea la internet
-- ✅ Contractul trebuie să fie deployat pe rețeaua activă
-- ✅ Wallet-ul trebuie să fie conectat
-
 ### ❌ **Erori la compilare**
 ```bash
 # Șterge cache și reinstalează
@@ -170,15 +164,6 @@ cd frontend_new
 rm -rf node_modules package-lock.json
 npm install
 ```
-
-## 🌊 Ocean Protocol Integration
-
-Acest proiect folosește Ocean Protocol pentru a publica date publice despre amenzi (anonimizate), transformându-le în bunuri publice digitale (public goods).
-
-🔗 Vizualizează datasetul publicat:  
-[https://market.oceanprotocol.com/asset/did:op:a2ceab33da0e9a7ebc402517215726c1410f61ef9f2a4e92a2c934af2668a1c6](https://market.oceanprotocol.com/asset/did:op:a2ceab33da0e9a7ebc402517215726c1410f61ef9f2a4e92a2c934af2668a1c6)
-
----
 
 ## 📁 Structura Proiectului
 
